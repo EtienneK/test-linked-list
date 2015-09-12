@@ -16,6 +16,5 @@ ext {
 dependencies {
 	// Test
 	testCompile "junit:junit:$junitVersion"
-	testCompile "com.jayway.awaitility:awaitility:$awaitilityVersion"
 }
 

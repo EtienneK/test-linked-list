@@ -18,7 +18,7 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 	private int count = 0;
 
 	@Override
-	public void addFirst(T toAdd) {
+	public synchronized void addFirst(T toAdd) {
 		if (toAdd == null) {
 			throw new NullPointerException("toAdd can not be null");
 		}
@@ -35,7 +35,7 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 	}
 
 	@Override
-	public void addLast(T toAdd) {
+	public synchronized void addLast(T toAdd) {
 		if (toAdd == null) {
 			throw new NullPointerException("toAdd can not be null");
 		}
@@ -52,7 +52,7 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 	}
 
 	@Override
-	public void addAfter(T toAdd, T after) {
+	public synchronized void addAfter(T toAdd, T after) {
 		if (toAdd == null) {
 			throw new NullPointerException("toAdd can not be null");
 		}
@@ -76,7 +76,7 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 	}
 
 	@Override
-	public void addBefore(T toAdd, T before) {
+	public synchronized void addBefore(T toAdd, T before) {
 		if (toAdd == null) {
 			throw new NullPointerException("toAdd can not be null");
 		}
@@ -100,7 +100,7 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 	}
 
 	@Override
-	public boolean contains(T toCheck) {
+	public synchronized boolean contains(T toCheck) {
 		if (toCheck == null) {
 			throw new NullPointerException("toCheck can not be null");
 		}
@@ -108,14 +108,14 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 	}
 
 	@Override
-	public void clear() {
+	public synchronized void clear() {
 		first = null;
 		last = null;
 		count = 0;
 	}
 
 	@Override
-	public Optional<T> remove(T toRemove) {
+	public synchronized Optional<T> remove(T toRemove) {
 		if (toRemove == null) {
 			throw new NullPointerException("toRemove can not be null");
 		}
@@ -145,7 +145,7 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 	}
 
 	@Override
-	public Optional<T> removeFirst() {
+	public synchronized Optional<T> removeFirst() {
 		if (first == null) {
 			return Optional.empty();
 		}
@@ -164,7 +164,7 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 	}
 
 	@Override
-	public Optional<T> removeLast() {
+	public synchronized Optional<T> removeLast() {
 		if (last == null) {
 			return Optional.empty();
 		}
@@ -183,19 +183,19 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 	}
 
 	@Override
-	public int getCount() {
+	public synchronized int getCount() {
 		return count;
 	}
 
 	@Override
-	public Optional<T> getFirst() {
+	public synchronized Optional<T> getFirst() {
 		if (first == null)
 			return Optional.empty();
 		return Optional.of(first.contents);
 	}
 
 	@Override
-	public Optional<T> getLast() {
+	public synchronized Optional<T> getLast() {
 		if (last == null)
 			return Optional.empty();
 		return Optional.of(last.contents);
@@ -236,7 +236,7 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 	}
 
 	@Override
-	public boolean isBefore(T toCheck, T after) {
+	public synchronized boolean isBefore(T toCheck, T after) {
 		if (toCheck == null) {
 			throw new NullPointerException("toCheck can not be null");
 		}
@@ -255,7 +255,7 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 	}
 
 	@Override
-	public boolean isAfter(T toCheck, T before) {
+	public synchronized boolean isAfter(T toCheck, T before) {
 		if (toCheck == null) {
 			throw new NullPointerException("toCheck can not be null");
 		}
