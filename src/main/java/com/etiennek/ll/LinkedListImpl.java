@@ -101,32 +101,85 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 
 	@Override
 	public boolean contains(T toCheck) {
-		// TODO Auto-generated method stub
-		return false;
+		if (toCheck == null) {
+			throw new NullPointerException("toCheck can not be null");
+		}
+		return findNodeWithContents(toCheck) != null;
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-
+		first = null;
+		last = null;
+		count = 0;
 	}
 
 	@Override
 	public Optional<T> remove(T toRemove) {
-		// TODO Auto-generated method stub
-		return null;
+		if (toRemove == null) {
+			throw new NullPointerException("toRemove can not be null");
+		}
+
+		Node found = findNodeWithContents(toRemove);
+		if (found == null) {
+			return Optional.empty();
+		}
+
+		if (found.isFirst()) {
+			removeFirst();
+		} else if (found.isLast()) {
+			removeLast();
+		} else {
+			Node before = found.before;
+			Node after = found.after;
+
+			before.after = after;
+			after.before = before;
+
+			found.before = null;
+			found.after = null;
+			count--;
+		}
+
+		return Optional.of(toRemove);
 	}
 
 	@Override
 	public Optional<T> removeFirst() {
-		// TODO Auto-generated method stub
-		return null;
+		if (first == null) {
+			return Optional.empty();
+		}
+		T toReturn = first.contents;
+
+		if (first == last) {
+			first = null;
+			last = null;
+		} else {
+			first = first.after;
+			first.before = null;
+		}
+
+		count--;
+		return Optional.of(toReturn);
 	}
 
 	@Override
 	public Optional<T> removeLast() {
-		// TODO Auto-generated method stub
-		return null;
+		if (last == null) {
+			return Optional.empty();
+		}
+		T toReturn = last.contents;
+
+		if (first == last) {
+			first = null;
+			last = null;
+		} else {
+			last = last.before;
+			last.after = null;
+		}
+
+		count--;
+		return Optional.of(toReturn);
 	}
 
 	@Override

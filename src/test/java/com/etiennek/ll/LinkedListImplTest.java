@@ -25,8 +25,8 @@ public class LinkedListImplTest {
 		count = toTest.getCount();
 
 		// Assert
-		assertEquals(toTest.getFirst(), Optional.empty());
-		assertEquals(toTest.getLast(), Optional.empty());
+		assertEquals(Optional.empty(), toTest.getFirst());
+		assertEquals(Optional.empty(), toTest.getLast());
 		assertEquals(count, 0);
 	}
 
@@ -39,8 +39,8 @@ public class LinkedListImplTest {
 		toTest.addFirst(firstItem);
 
 		// Assert
-		assertEquals((int) toTest.getFirst().get(), firstItem);
-		assertEquals((int) toTest.getLast().get(), firstItem);
+		assertEquals(firstItem, (int) toTest.getFirst().get());
+		assertEquals(firstItem, (int) toTest.getLast().get());
 		assertEquals(toTest.getCount(), 1);
 	}
 
@@ -176,11 +176,12 @@ public class LinkedListImplTest {
 		assertEquals((int) toTest.getFirst().get(), firstItem);
 		assertEquals((int) toTest.getLast().get(), lastItem);
 		assertEquals(toTest.getCount(), 2);
-		
+
 		assertTrue(toTest.isBefore(firstItem, lastItem));
 		assertTrue(toTest.isAfter(lastItem, firstItem));
 	}
 
+	@Test
 	public void addBefore_should_add_an_item_somewhere_in_the_middle_when_before_is_not_the_first_item() {
 		// Arrange
 		int firstItem = newItem();
@@ -200,11 +201,225 @@ public class LinkedListImplTest {
 		assertEquals((int) toTest.getFirst().get(), firstItem);
 		assertEquals((int) toTest.getLast().get(), lastItem);
 		assertEquals(toTest.getCount(), 6);
-		
+
 		assertTrue(toTest.isBefore(firstItem, afterFirstItem));
 		assertTrue(toTest.isAfter(afterFirstItem, firstItem));
 		assertTrue(toTest.isBefore(beforeLastItem, lastItem));
 		assertTrue(toTest.isAfter(lastItem, beforeLastItem));
+	}
+
+	@Test
+	public void contains_Should_return_false_when_an_item_cant_be_found_in_the_list() {
+		// Arrange
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+
+		// Act
+		boolean contains = toTest.contains(newItem());
+
+		// Assert
+		assertFalse(contains);
+	}
+
+	@Test
+	public void contains_Should_return_true_when_an_item_can_be_found_in_the_list() {
+		// Arrange
+		int toFind = newItem();
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(toFind);
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+
+		// Act
+		boolean contains = toTest.contains(toFind);
+
+		// Assert
+		assertTrue(contains);
+	}
+
+	@Test
+	public void clear_Should_empty_the_list() {
+		// Arrange
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+		toTest.addFirst(newItem());
+
+		// Act
+		toTest.clear();
+
+		// Assert
+		assertEquals(toTest.getFirst(), Optional.empty());
+		assertEquals(toTest.getLast(), Optional.empty());
+		assertEquals(toTest.getCount(), 0);
+	}
+
+	@Test
+	public void remove_Should_remove_an_item_in_the_middle_of_a_list() {
+		// Arrange
+		int itemToRemove = newItem();
+		int itemBeforeRemove = newItem();
+		int itemAfterRemove = newItem();
+
+		toTest.addLast(newItem());
+		toTest.addLast(newItem());
+		toTest.addLast(newItem());
+		toTest.addLast(itemBeforeRemove);
+		toTest.addLast(itemToRemove);
+		toTest.addLast(itemAfterRemove);
+		toTest.addLast(newItem());
+		toTest.addLast(newItem());
+
+		// Act
+		toTest.remove(itemToRemove);
+
+		// Assert
+		assertEquals(toTest.getCount(), 7);
+		assertFalse(toTest.contains(itemToRemove));
+		assertTrue(toTest.isBefore(itemBeforeRemove, itemAfterRemove));
+		assertTrue(toTest.isAfter(itemAfterRemove, itemBeforeRemove));
+	}
+
+	@Test
+	public void remove_Should_remove_the_first_item_of_a_list() {
+		// Arrange
+		int itemToRemove = newItem();
+		int itemAfterRemove = newItem();
+
+		toTest.addFirst(itemToRemove);
+		toTest.addAfter(itemAfterRemove, itemToRemove);
+		toTest.addLast(newItem());
+		toTest.addLast(newItem());
+		toTest.addLast(newItem());
+
+		// Act
+		int removed = toTest.remove(itemToRemove).get();
+
+		// Assert
+		assertEquals(itemToRemove, removed);
+		assertEquals(toTest.getCount(), 4);
+		assertFalse(toTest.contains(itemToRemove));
+		assertEquals(itemAfterRemove, (int) toTest.getFirst().get());
+	}
+
+	@Test
+	public void remove_Should_remove_the_last_item_of_a_list() {
+		// Arrange
+		int itemToRemove = newItem();
+		int itemBeforeRemove = newItem();
+
+		toTest.addLast(newItem());
+		toTest.addLast(newItem());
+		toTest.addLast(newItem());
+		toTest.addLast(itemBeforeRemove);
+		toTest.addLast(itemToRemove);
+
+		// Act
+		int removed = toTest.remove(itemToRemove).get();
+
+		// Assert
+		assertEquals(itemToRemove, removed);
+		assertEquals(toTest.getCount(), 4);
+		assertFalse(toTest.contains(itemToRemove));
+		assertEquals(itemBeforeRemove, (int) toTest.getLast().get());
+	}
+
+	@Test
+	public void removeFirst_should_remove_the_first_and_only_item_in_a_list() {
+		// Arrange
+		int itemToRemove = newItem();
+
+		toTest.addLast(itemToRemove);
+
+		// Act
+		int removed = toTest.removeFirst().get();
+
+		// Assert
+		assertEquals(itemToRemove, removed);
+		assertFalse(toTest.contains(itemToRemove));
+		assertEquals(Optional.empty(), toTest.getFirst());
+		assertEquals(Optional.empty(), toTest.getLast());
+		assertEquals(toTest.getCount(), 0);
+	}
+
+	@Test
+	public void removeFirst_should_remove_the_first_item_in_a_multi_valued_list() {
+		// Arrange
+		int itemToRemove = newItem();
+		int itemAfterRemove = newItem();
+		int itemAfterAfterRemove = newItem();
+
+		toTest.addLast(itemToRemove);
+		toTest.addLast(itemAfterRemove);
+		toTest.addLast(itemAfterAfterRemove);
+		toTest.addLast(newItem());
+		toTest.addLast(newItem());
+
+		// Act
+		int removed = toTest.remove(itemToRemove).get();
+
+		// Assert
+		assertEquals(itemToRemove, removed);
+		assertEquals(toTest.getCount(), 4);
+		assertFalse(toTest.contains(itemToRemove));
+		assertEquals(itemAfterRemove, (int) toTest.getFirst().get());
+
+		assertTrue(toTest.isBefore(itemAfterRemove, itemAfterAfterRemove));
+		assertTrue(toTest.isAfter(itemAfterAfterRemove, itemAfterRemove));
+	}
+
+	@Test
+	public void removeLast_should_remove_the_last_and_only_item_in_a_list() {
+		// Arrange
+		int itemToRemove = newItem();
+
+		toTest.addLast(itemToRemove);
+
+		// Act
+		int removed = toTest.removeLast().get();
+
+		// Assert
+		assertEquals(itemToRemove, removed);
+		assertFalse(toTest.contains(itemToRemove));
+		assertEquals(Optional.empty(), toTest.getFirst());
+		assertEquals(Optional.empty(), toTest.getLast());
+		assertEquals(toTest.getCount(), 0);
+	}
+
+	@Test
+	public void removeLast_should_remove_the_last_item_in_a_multi_valued_list() {
+		// Arrange
+		int itemToRemove = newItem();
+		int itemBeforeRemove = newItem();
+		int itemBeforeBeforeRemove = newItem();
+
+		toTest.addLast(newItem());
+		toTest.addLast(newItem());
+		toTest.addLast(itemBeforeBeforeRemove);
+		toTest.addLast(itemBeforeRemove);
+		toTest.addLast(itemToRemove);
+
+		// Act
+		int removed = toTest.remove(itemToRemove).get();
+
+		// Assert
+		assertEquals(itemToRemove, removed);
+		assertEquals(toTest.getCount(), 4);
+		assertFalse(toTest.contains(itemToRemove));
+		assertEquals(itemBeforeRemove, (int) toTest.getLast().get());
+
+		assertTrue(toTest.isBefore(itemBeforeBeforeRemove, itemBeforeRemove));
+		assertTrue(toTest.isAfter(itemBeforeRemove, itemBeforeBeforeRemove));
 	}
 
 	private int newItem() {
